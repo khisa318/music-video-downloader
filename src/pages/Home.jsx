@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
+import Navbar from '../components/Navbar';
 import { PlaylistInputCard, DirectSearchCard } from '../components/SearchCards';
 import ResultsQueue from '../components/ResultsQueue';
 
 function Home() {
-  const [hasResults, setHasResults] = useState(true);
+  const [queueItems, setQueueItems] = useState([]);
 
-  const playlistItems = [
-    { id: 1, title: "Ty Dolla $ign - DON'T KILL THE PARTY (feat. Quavo & Juicy J) [Official Music Video]", author: "Ty Dolla $ign", thumbnail: "https://images.unsplash.com/photo-1614680376593-902f74fa0d41?auto=format&fit=crop&w=120&q=80" },
-    { id: 2, title: "The Weeknd, Playboi Carti - Timeless", author: "The Weeknd", thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=120&q=80" },
-    { id: 3, title: "Travis Scott feat. Young Thug & M.I.A. - FRANCHISE (Official Music Video)", author: "Travis Scott", thumbnail: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=120&q=80" },
-  ];
+  const handleNewVideoDispatched = (videoData) => {
+    const newTrack = {
+      id: videoData.video_id,         
+      video_id: videoData.video_id,   
+      title: videoData.title,         
+      author: videoData.author,       
+      thumbnail: videoData.thumbnail  
+    };
+
+    setQueueItems((prevItems) => [...prevItems, newTrack]);
+  };
 
   const faqs = [
     { q: "Can I download an entire YouTube playlist with yt-downloader?", a: "Yes. yt-downloader supports downloading full YouTube playlists by processing all videos from a single playlist link." },
@@ -23,19 +30,18 @@ function Home() {
     <div className="min-h-screen w-full bg-gradient-to-b from-gray-50 via-gray-100/70 to-white font-sans antialiased flex flex-col selection:bg-blue-600 selection:text-white">
 
       <main className="max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 space-y-8 flex-grow">
-        {/* TOP CORES INPUT ROW */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <PlaylistInputCard 
-            hasResults={hasResults} 
-            onToggleResults={() => setHasResults(!hasResults)} 
+            hasResults={queueItems.length > 0} 
+            onVideoDispatched={handleNewVideoDispatched} 
           />
           <DirectSearchCard />
         </div>
 
-        {/* FULL-WIDTH DYNAMIC RESULTS STREAM */}
-        {hasResults && <ResultsQueue items={playlistItems} />}
+        {queueItems.length > 0 && (
+          <ResultsQueue items={queueItems} />
+        )}
 
-        {/* LOWER VALUE DOCUMENTATION GRID */}
         <hr className="border-gray-200/80 my-6" />
 
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start pt-4">

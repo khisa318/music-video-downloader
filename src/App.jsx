@@ -14,6 +14,9 @@ function App(){
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="*" element={<NotFoundPage />} />
+        <Route path="/audio-to-text" element={<AudioToText />} />
+        <Route path="/video-to-text" element={<VideoToText />} />
+        <Route path="/subtitle-generator" element={<SubtitleGenerator />} />
       </Routes>
     </>
   )

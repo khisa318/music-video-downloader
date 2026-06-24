@@ -1,4 +1,5 @@
 import React from 'react';
+import {NavLink} from 'react-router-dom';
 
 const Navbar = () => {
   return (
@@ -10,10 +11,18 @@ const Navbar = () => {
           </span>
         </div>
         <div className="flex items-center gap-5 font-bold text-xs sm:text-sm">
-          <button type="button" className="text-blue-600">Home</button>
-          <button type="button" className="text-gray-500 hover:text-gray-900 transition">Audio to Text</button>
-          <button type="button" className="text-gray-500 hover:text-gray-900 transition">Video to Text</button>
-          <button type="button" className="hidden sm:inline-block text-gray-500 hover:text-gray-900 transition">Subtitle Generator</button>
+          <NavLink to="/" className="text-blue-600">
+            Home
+          </NavLink>
+          <NavLink to="/audio-to-text" className="text-gray-500 hover:text-gray-900 transition">
+            Audio to Text
+          </NavLink>
+          <NavLink to="/video-to-text" className="text-gray-500 hover:text-gray-900 transition">
+            Video to Text
+          </NavLink>
+          <NavLink to="/subtitle-generator" className="hidden sm:inline-block text-gray-500 hover:text-gray-900 transition">
+            Subtitle Generator
+          </NavLink>
         </div>
       </div>
     </nav>

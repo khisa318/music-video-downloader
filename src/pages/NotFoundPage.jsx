@@ -4,7 +4,6 @@ import Navbar from '../components/Navbar';
 function NotFound() {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-gray-50 via-gray-100/70 to-white font-sans antialiased flex flex-col selection:bg-blue-600 selection:text-white">
-      <Navbar />
 
       <main className="max-w-6xl w-full mx-auto px-4 sm:px-6 flex-grow flex items-center justify-center py-16">
         <div className="max-w-md w-full text-center space-y-6 rounded-[2rem] bg-white p-8 sm:p-10 shadow-xl shadow-gray-200/50 border border-gray-200/60 transition hover:shadow-2xl hover:shadow-gray-200/60 duration-300">

@@ -1,10 +1,46 @@
 import React from 'react';
 
-export const PlaylistInputCard = ({ hasResults, onToggleResults }) => {
+import React, { useState } from 'react';
+
+export const PlaylistInputCard = ({ hasResults, onToggleResults, onVideoDispatched }) => {
+  const [playlistUrl, setPlaylistUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleStartDownload = async () => {
+    if (!playlistUrl) return alert("Please enter a valid link!");
+    
+    setLoading(true);
+    try {
+      // Send a POST request to the Flask server
+      const response = await fetch('http://localhost:8888/download/1080p', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: playlistUrl }),
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Pass the new video_id up to the parent layout to track progress
+        onVideoDispatched(data.video_id);
+        if (!hasResults) onToggleResults(); 
+      } else {
+        alert("Server Error: " + data.error);
+      }
+    } catch (err) {
+      console.error("Failed to connect to backend:", err);
+      alert("Could not reach backend. Make sure your Python server is running on port 8888!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="rounded-[2rem] bg-white p-6 sm:p-8 shadow-xl shadow-gray-200/50 border border-gray-200/60 flex flex-col justify-between transition hover:shadow-2xl hover:shadow-gray-200/60 duration-300">
+    <div className="rounded-[2rem] bg-white p-6 sm:p-8 shadow-xl border border-gray-200/60 flex flex-col justify-between">
       <div>
-        <h2 className="text-center text-2xl font-black tracking-tight text-[#0d3559] mb-4">
+        <h2 className="text-center text-2xl font-black text-[#0d3559] mb-4">
           YouTube Playlist Downloader
         </h2>
 
@@ -12,47 +48,24 @@ export const PlaylistInputCard = ({ hasResults, onToggleResults }) => {
           <div className="relative">
             <input
               type="text"
+              value={playlistUrl}
+              onChange={(e) => setPlaylistUrl(e.target.value)}
               placeholder="Paste playlist URL here..."
-              className="w-full rounded-full border border-gray-200 bg-gray-50/50 py-3.5 pl-5 pr-12 text-sm font-medium text-gray-800 placeholder-gray-400 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition shadow-inner"
+              className="w-full rounded-full border border-gray-200 bg-gray-50/50 py-3.5 pl-5 pr-12 text-sm font-medium text-gray-800 placeholder-gray-400 outline-none focus:bg-white focus:border-blue-500 transition"
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg cursor-pointer hover:text-gray-600">📋</span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex rounded-full bg-gray-100 p-1 font-bold text-xs">
-                <button type="button" className="rounded-full bg-gray-900 text-white px-4 py-1.5 shadow-sm">MP3</button>
-                <button type="button" className="rounded-full text-gray-500 px-4 py-1.5 hover:text-gray-900">MP4</button>
-              </div>
-
-              <select className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-600 outline-none cursor-pointer shadow-sm focus:border-blue-500">
-                <option>MP3 - 128kbps</option>
-                <option>MP3 - 320kbps</option>
-              </select>
-
-              <select className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-600 outline-none cursor-pointer shadow-sm focus:border-blue-500">
-                <option>Origin</option>
-              </select>
-            </div>
-
+          <div className="flex justify-end gap-3 pt-1">
             <button 
-              onClick={onToggleResults} 
+              onClick={handleStartDownload}
               type="button" 
-              className="rounded-full bg-blue-600 text-white px-6 py-2 text-xs font-black tracking-wide hover:bg-blue-700 active:scale-95 transition shadow-md shadow-blue-500/20"
+              disabled={loading}
+              className="rounded-full bg-blue-600 text-white px-6 py-2 text-xs font-black tracking-wide hover:bg-blue-700 disabled:opacity-50 transition shadow-md"
             >
-              {hasResults ? "Clear View" : "Start"}
+              {loading ? "Processing..." : "Start"}
             </button>
           </div>
         </div>
-      </div>
-
-      <div className="rounded-xl bg-blue-50/50 p-3 border border-blue-100/70 mt-6">
-        <label className="flex items-start gap-2.5 select-none cursor-pointer">
-          <input type="checkbox" defaultChecked className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500/30" />
-          <span className="text-[11px] font-medium leading-relaxed text-gray-600">
-            I confirm that I agree to the standards in the <span className="text-blue-600 underline font-semibold">Copyright Disclaimer</span> and will not download copyrighted content.
-          </span>
-        </label>
       </div>
     </div>
   );
